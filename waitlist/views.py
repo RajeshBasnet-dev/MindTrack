@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from .forms import WaitlistForm
-from .models import WaitlistEntry, CommunityPost
+from .models import WaitlistEntry, CommunityPost, Reply
 from openpyxl import Workbook, load_workbook
 import os
 from django.conf import settings
@@ -45,27 +45,48 @@ def community(request):
         email = request.POST.get('email')
         name = request.POST.get('name', 'Anonymous')
         message = request.POST.get('message')
+        post_id = request.POST.get('post_id')  # Check if this is a reply
+
         if not email or not message:
             return JsonResponse({'error': 'Email and message are required!'}, status=200)
-        
-        # Save to database
-        post = CommunityPost(email=email, name=name, message=message)
-        post.save()
 
-        # Save to Excel
-        excel_file = os.path.join(settings.BASE_DIR, 'community_posts.xlsx')
-        if not os.path.exists(excel_file):
-            wb = Workbook()
-            ws = wb.active
-            ws.append(['Email', 'Name', 'Message', 'Timestamp'])
-        else:
-            wb = load_workbook(excel_file)
-            ws = wb.active
-        ws.append([email, name, message, post.created_at.strftime('%Y-%m-%d %H:%M:%S')])
-        wb.save(excel_file)
+        if post_id:  # Handle reply
+            try:
+                post = CommunityPost.objects.get(id=post_id)
+                reply = Reply(post=post, email=email, name=name, message=message)
+                reply.save()
 
-        return JsonResponse({'message': 'Your post has been added to the community!'}, status=200)
-    
-    # GET request - show posts
+                # Save reply to Excel
+                excel_file = os.path.join(settings.BASE_DIR, 'community_posts.xlsx')
+                if not os.path.exists(excel_file):
+                    wb = Workbook()
+                    ws = wb.active
+                    ws.append(['Post ID', 'Email', 'Name', 'Message', 'Timestamp', 'Type'])
+                else:
+                    wb = load_workbook(excel_file)
+                    ws = wb.active
+                ws.append([post_id, email, name, message, reply.created_at.strftime('%Y-%m-%d %H:%M:%S'), 'Reply'])
+                wb.save(excel_file)
+
+                return JsonResponse({'message': 'Your reply has been added!'}, status=200)
+            except CommunityPost.DoesNotExist:
+                return JsonResponse({'error': 'Post not found!'}, status=200)
+        else:  # Handle new post
+            post = CommunityPost(email=email, name=name, message=message)
+            post.save()
+
+            excel_file = os.path.join(settings.BASE_DIR, 'community_posts.xlsx')
+            if not os.path.exists(excel_file):
+                wb = Workbook()
+                ws = wb.active
+                ws.append(['Post ID', 'Email', 'Name', 'Message', 'Timestamp', 'Type'])
+            else:
+                wb = load_workbook(excel_file)
+                ws = wb.active
+            ws.append([post.id, email, name, message, post.created_at.strftime('%Y-%m-%d %H:%M:%S'), 'Post'])
+            wb.save(excel_file)
+
+            return JsonResponse({'message': 'Your post has been added to the community!'}, status=200)
+
     posts = CommunityPost.objects.all().order_by('-created_at')[:10]  # Last 10 posts
     return render(request, 'waitlist/community.html', {'posts': posts})

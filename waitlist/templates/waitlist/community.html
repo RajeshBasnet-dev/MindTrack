@@ -59,6 +59,10 @@
         .post-card:hover {
             background: rgba(255, 255, 255, 0.07);
         }
+        .reply-card {
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 2px solid #8b5cf6;
+        }
     </style>
 </head>
 <body class="text-white antialiased">
@@ -117,11 +121,39 @@
         <!-- Discussion Threads -->
         <section class="mb-20 animate-fade-in">
             <h3 class="text-4xl font-bold text-indigo-300 mb-8 text-center">Recent Discussions</h3>
-            <div class="space-y-6">
+            <div class="space-y-8">
                 {% for post in posts %}
                     <div class="glass-card post-card p-6">
                         <p class="text-gray-300 text-lg"><span class="font-semibold text-indigo-200">{{ post.name }}:</span> {{ post.message }}</p>
                         <p class="text-gray-400 text-sm mt-2">Posted on {{ post.created_at|date:"F j, Y H:i" }}</p>
+                        
+                        <!-- Reply Form -->
+                        <div class="mt-4">
+                            <form class="reply-form" data-post-id="{{ post.id }}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="post_id" value="{{ post.id }}">
+                                <div class="flex flex-col space-y-2">
+                                    <input type="email" name="email" placeholder="Your Email" class="p-2 rounded-lg bg-gray-800/70 border border-gray-700/50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" required>
+                                    <input type="text" name="name" placeholder="Your Name (Optional)" class="p-2 rounded-lg bg-gray-800/70 border border-gray-700/50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                                    <textarea name="message" placeholder="Your Reply" class="p-2 rounded-lg bg-gray-800/70 border border-gray-700/50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" rows="2" required></textarea>
+                                    <button type="submit" class="p-2 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg hover:from-indigo-600 hover:to-purple-700 text-white font-semibold transition-all duration-300">Reply</button>
+                                </div>
+                                <p class="reply-confirmation hidden mt-2 text-green-400 text-sm"></p>
+                                <p class="reply-error hidden mt-2 text-red-400 text-sm"></p>
+                            </form>
+                        </div>
+
+                        <!-- Replies -->
+                        <div class="mt-4 space-y-2">
+                            {% for reply in post.replies.all %}
+                                <div class="reply-card p-4 rounded-lg">
+                                    <p class="text-gray-300 text-sm"><span class="font-semibold text-indigo-200">{{ reply.name }}:</span> {{ reply.message }}</p>
+                                    <p class="text-gray-400 text-xs mt-1">Replied on {{ reply.created_at|date:"F j, Y H:i" }}</p>
+                                </div>
+                            {% empty %}
+                                <p class="text-gray-400 text-sm">No replies yet—be the first!</p>
+                            {% endfor %}
+                        </div>
                     </div>
                 {% empty %}
                     <p class="text-gray-400 text-center">Be the first to start the conversation!</p>
@@ -145,12 +177,11 @@
         gsap.from('.animate-fade-in', { opacity: 0, y: 30, duration: 1, stagger: 0.2 });
         gsap.to('.animate-pulse-slow', { scale: 1.05, duration: 1.5, repeat: -1, yoyo: true, ease: 'power1.inOut' });
 
+        // Post Form
         document.getElementById('community-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-            console.log('CSRF Token:', csrfToken);
-            console.log('Form data:', Object.fromEntries(formData));
 
             const confirmation = document.getElementById('post-confirmation');
             const errorMessage = document.getElementById('post-error');
@@ -162,23 +193,16 @@
             fetch('/community/', {
                 method: 'POST',
                 body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRFToken': csrfToken
-                }
+                headers: { 'X-CSRFToken': csrfToken, 'X-Requested-With': 'XMLHttpRequest' }
             })
-            .then(response => {
-                console.log('Response status:', response.status);
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
-                console.log('Response data:', data);
                 if (data.message) {
                     confirmation.textContent = data.message;
                     confirmation.classList.remove('hidden');
                     gsap.fromTo('#post-confirmation', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5 });
-                    this.reset(); // Clear form
-                    setTimeout(() => { location.reload(); }, 1500); // Refresh to show new post
+                    this.reset();
+                    setTimeout(() => { location.reload(); }, 1500);
                 } else if (data.error) {
                     errorMessage.textContent = data.error;
                     errorMessage.classList.remove('hidden');
@@ -186,10 +210,49 @@
                 }
             })
             .catch(error => {
-                console.error('Fetch error:', error);
                 errorMessage.textContent = 'Something went wrong. Please try again.';
                 errorMessage.classList.remove('hidden');
-                gsap.fromTo('#post-error', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5 });
+            });
+        });
+
+        // Reply Forms
+        document.querySelectorAll('.reply-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                const postId = this.getAttribute('data-post-id');
+
+                const confirmation = this.querySelector('.reply-confirmation');
+                const errorMessage = this.querySelector('.reply-error');
+                confirmation.classList.add('hidden');
+                errorMessage.classList.add('hidden');
+                confirmation.textContent = '';
+                errorMessage.textContent = '';
+
+                fetch('/community/', {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-CSRFToken': csrfToken, 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        confirmation.textContent = data.message;
+                        confirmation.classList.remove('hidden');
+                        gsap.fromTo(confirmation, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5 });
+                        this.reset();
+                        setTimeout(() => { location.reload(); }, 1500);
+                    } else if (data.error) {
+                        errorMessage.textContent = data.error;
+                        errorMessage.classList.remove('hidden');
+                        gsap.fromTo(errorMessage, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5 });
+                    }
+                })
+                .catch(error => {
+                    errorMessage.textContent = 'Something went wrong. Please try again.';
+                    errorMessage.classList.remove('hidden');
+                });
             });
         });
     </script>
