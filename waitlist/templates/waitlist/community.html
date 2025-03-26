@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindTrack - Community Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1e1b4b 0%, #2d234c 50%, #3b2a50 100%);
+            overflow-x: hidden;
+        }
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(90deg, #8b5cf6, #d946ef);
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(90deg, #6d28d9, #c026d3);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease-in-out;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(139, 92, 246, 0.3);
+        }
+        .join-btn {
+            background: linear-gradient(90deg, #8b5cf6, #d946ef);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+        }
+        .join-btn:hover {
+            background: linear-gradient(90deg, #6d28d9, #c026d3);
+            box-shadow: 0 0 20px rgba(216, 70, 239, 0.8);
+            transform: scale(1.05);
+        }
+        .social-icon, .nav-link {
+            transition: all 0.3s ease-in-out;
+        }
+        .social-icon:hover, .nav-link:hover {
+            transform: scale(1.1);
+            color: #d946ef;
+        }
+        .post-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(139, 92, 246, 0.1);
+        }
+        .post-card:hover {
+            background: rgba(255, 255, 255, 0.07);
+        }
+    </style>
+</head>
+<body class="text-white antialiased">
+    <!-- Sticky Header -->
+    <header class="fixed top-0 left-0 w-full bg-gray-900/90 backdrop-blur-lg shadow-xl z-10">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-brain text-3xl text-indigo-400 animate-pulse-slow"></i>
+                <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500">MindTrack</h1>
+            </div>
+            <div class="flex space-x-6">
+                <a href="{% url 'learnmore' %}" class="nav-link text-indigo-400 font-semibold text-lg">Learn More</a>
+                <a href="{% url 'home' %}" class="nav-link text-indigo-400 font-semibold text-lg">Join the Waitlist</a>
+                <a href="{% url 'community' %}" class="join-btn px-6 py-3 rounded-xl text-white font-semibold transition-all duration-300">Community</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="pt-28 pb-16 max-w-7xl mx-auto px-6">
+        <!-- Hero Section -->
+        <section class="text-center mb-20 relative">
+            <div class="absolute inset-0 bg-gradient-to-b from-indigo-900/20 to-transparent pointer-events-none"></div>
+            <h2 class="text-6xl md:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-400 animate-fade-in">Community Hub</h2>
+            <p class="mt-4 text-2xl md:text-3xl text-gray-300 animate-fade-in">Connect, Share, Grow</p>
+            <p class="mt-6 text-lg md:text-xl text-gray-400 max-w-3xl mx-auto animate-fade-in leading-relaxed">
+                Join the MindTrack community to discuss mental wellness, ask questions, and share your journey. Your email keeps it secure—your voice matters.
+            </p>
+        </section>
+
+        <!-- Discussion Form -->
+        <section class="mb-20 animate-fade-in">
+            <h3 class="text-4xl font-bold text-indigo-300 mb-8 text-center">Start a Conversation</h3>
+            <div class="glass-card p-8">
+                <form id="community-form" method="POST" class="space-y-6">
+                    {% csrf_token %}
+                    <div>
+                        <label for="email" class="block text-sm text-gray-300 mb-2">Your Email (Required)</label>
+                        <input type="email" id="email" name="email" class="w-full p-4 rounded-xl bg-gray-800/70 border border-gray-700/50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent shadow-lg transition-all duration-300" required />
+                    </div>
+                    <div>
+                        <label for="name" class="block text-sm text-gray-300 mb-2">Your Name (Optional, defaults to Anonymous)</label>
+                        <input type="text" id="name" name="name" placeholder="Anonymous" class="w-full p-4 rounded-xl bg-gray-800/70 border border-gray-700/50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent shadow-lg transition-all duration-300" />
+                    </div>
+                    <div>
+                        <label for="message" class="block text-sm text-gray-300 mb-2">Your Question or Comment</label>
+                        <textarea id="message" name="message" class="w-full p-4 rounded-xl bg-gray-800/70 border border-gray-700/50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent shadow-lg transition-all duration-300" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="w-full p-4 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl hover:from-indigo-600 hover:to-purple-700 transition-all duration-500 text-white font-semibold transform hover:scale-105">Post</button>
+                </form>
+                <p id="post-confirmation" class="hidden mt-6 text-center text-green-400 font-medium text-lg"></p>
+                <p id="post-error" class="hidden mt-6 text-center text-red-400 font-medium text-lg"></p>
+            </div>
+        </section>
+
+        <!-- Discussion Threads -->
+        <section class="mb-20 animate-fade-in">
+            <h3 class="text-4xl font-bold text-indigo-300 mb-8 text-center">Recent Discussions</h3>
+            <div class="space-y-6">
+                {% for post in posts %}
+                    <div class="glass-card post-card p-6">
+                        <p class="text-gray-300 text-lg"><span class="font-semibold text-indigo-200">{{ post.name }}:</span> {{ post.message }}</p>
+                        <p class="text-gray-400 text-sm mt-2">Posted on {{ post.created_at|date:"F j, Y H:i" }}</p>
+                    </div>
+                {% empty %}
+                    <p class="text-gray-400 text-center">Be the first to start the conversation!</p>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900/80 py-6 text-center text-gray-400">
+        <div class="flex justify-center space-x-8 mb-4">
+            <a href="{% url 'learnmore' %}" class="nav-link text-indigo-400">Learn More</a>
+            <a href="{% url 'home' %}" class="nav-link text-indigo-400">Join the Waitlist</a>
+            <a href="{% url 'community' %}" class="nav-link text-indigo-400">Community</a>
+        </div>
+        <p>© 2025 MindTrack. All rights reserved. Built with <i class="fas fa-heart text-red-400"></i> for your mind.</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        gsap.from('.animate-fade-in', { opacity: 0, y: 30, duration: 1, stagger: 0.2 });
+        gsap.to('.animate-pulse-slow', { scale: 1.05, duration: 1.5, repeat: -1, yoyo: true, ease: 'power1.inOut' });
+
+        document.getElementById('community-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            console.log('CSRF Token:', csrfToken);
+            console.log('Form data:', Object.fromEntries(formData));
+
+            const confirmation = document.getElementById('post-confirmation');
+            const errorMessage = document.getElementById('post-error');
+            confirmation.classList.add('hidden');
+            errorMessage.classList.add('hidden');
+            confirmation.textContent = '';
+            errorMessage.textContent = '';
+
+            fetch('/community/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': csrfToken
+                }
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                if (data.message) {
+                    confirmation.textContent = data.message;
+                    confirmation.classList.remove('hidden');
+                    gsap.fromTo('#post-confirmation', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5 });
+                    this.reset(); // Clear form
+                    setTimeout(() => { location.reload(); }, 1500); // Refresh to show new post
+                } else if (data.error) {
+                    errorMessage.textContent = data.error;
+                    errorMessage.classList.remove('hidden');
+                    gsap.fromTo('#post-error', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5 });
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                errorMessage.textContent = 'Something went wrong. Please try again.';
+                errorMessage.classList.remove('hidden');
+                gsap.fromTo('#post-error', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5 });
+            });
+        });
+    </script>
+</body>
+</html>

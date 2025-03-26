@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindTrack - Discover Your Wellness Journey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1e1b4b 0%, #2d234c 50%, #3b2a50 100%);
+            overflow-x: hidden;
+        }
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(90deg, #8b5cf6, #d946ef);
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(90deg, #6d28d9, #c026d3);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease-in-out;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(139, 92, 246, 0.3);
+        }
+        .join-btn {
+            background: linear-gradient(90deg, #8b5cf6, #d946ef);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+        }
+        .join-btn:hover {
+            background: linear-gradient(90deg, #6d28d9, #c026d3);
+            box-shadow: 0 0 20px rgba(216, 70, 239, 0.8);
+            transform: scale(1.05);
+        }
+        .social-icon, .nav-link {
+            transition: all 0.3s ease-in-out;
+        }
+        .social-icon:hover, .nav-link:hover {
+            transform: scale(1.1);
+            color: #d946ef;
+        }
+    </style>
+</head>
+<body class="text-white antialiased">
+    <!-- Sticky Header -->
+    <header class="fixed top-0 left-0 w-full bg-gray-900/90 backdrop-blur-lg shadow-xl z-10">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-brain text-3xl text-indigo-400 animate-pulse-slow"></i>
+                <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500">MindTrack</h1>
+            </div>
+            <div class="flex space-x-6">
+                <a href="{% url 'learnmore' %}" class="nav-link text-indigo-400 font-semibold text-lg">Learn More</a>
+                <a href="{% url 'home' %}" class="nav-link text-indigo-400 font-semibold text-lg">Join the Waitlist</a>
+                <a href="{% url 'community' %}" class="join-btn px-6 py-3 rounded-xl text-white font-semibold transition-all duration-300">Community</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="pt-28 pb-16 max-w-7xl mx-auto px-6">
+        <!-- Hero Section -->
+        <section class="text-center mb-20 relative">
+            <div class="absolute inset-0 bg-gradient-to-b from-indigo-900/20 to-transparent pointer-events-none"></div>
+            <h2 class="text-6xl md:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-400 animate-fade-in">MindTrack</h2>
+            <p class="mt-4 text-2xl md:text-3xl text-gray-300 animate-fade-in">Your AI-Powered Wellness Companion</p>
+            <p class="mt-6 text-lg md:text-xl text-gray-400 max-w-3xl mx-auto animate-fade-in leading-relaxed">
+                Revolutionize your mental well-being with cutting-edge AI tools designed to understand you, empower you, and connect you.
+            </p>
+            <div class="mt-8 flex justify-center space-x-6">
+                <a href="{% url 'home' %}" class="px-8 py-4 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl text-white font-semibold hover:from-indigo-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105">Join the Waitlist</a>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section class="mb-20 animate-fade-in">
+            <h3 class="text-4xl font-bold text-indigo-300 mb-8 text-center">What is MindTrack?</h3>
+            <div class="glass-card p-8">
+                <p class="text-gray-200 text-lg leading-relaxed mb-4">
+                    MindTrack is more than an app—it’s your personal mental wellness partner. Powered by advanced AI, it tracks your emotions, optimizes your productivity, and supports your growth with tailored insights and a vibrant community.
+                </p>
+                <p class="text-gray-200 text-lg leading-relaxed mb-4">
+                    We’re here to break the stigma around mental health, making it accessible and actionable. From AI-driven journaling to real-time chatbot support, MindTrack blends technology with empathy to help you thrive—whether you’re tackling stress, burnout, or just leveling up your self-care game.
+                </p>
+                <p class="text-gray-200 text-lg leading-relaxed">
+                    Join a movement where your mind matters. With MindTrack, wellness isn’t a chore—it’s a journey, and we’ve got the tools to guide you every step of the way.
+                </p>
+            </div>
+        </section>
+
+        <!-- Production Status Section -->
+        <section class="mb-20 animate-fade-in">
+            <h3 class="text-4xl font-bold text-indigo-300 mb-8 text-center">Coming Soon!</h3>
+            <div class="glass-card p-8 text-center">
+                <p class="text-gray-200 text-lg leading-relaxed mb-4">
+                    MindTrack is currently in production, being crafted from the ground up by a passionate beginner developer. This isn’t a corporate churn-out—it’s a labor of love, built with grit and a vision to redefine mental wellness.
+                </p>
+                <p class="text-gray-200 text-lg leading-relaxed">
+                    We’re putting the final touches on this bad boy, and it’ll be live soon—real soon. Join the waitlist, stay tuned, and get ready to experience something fresh and game-changing!
+                </p>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="mb-20 animate-fade-in">
+            <h3 class="text-4xl font-bold text-indigo-300 mb-8 text-center">Why MindTrack Stands Out</h3>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="glass-card p-6 hover:bg-gray-800/70">
+                    <i class="fas fa-pen-fancy text-3xl text-indigo-400 mb-4"></i>
+                    <h4 class="text-xl font-semibold text-indigo-200 mb-2">AI-Driven Journaling</h4>
+                    <p class="text-gray-300">Log your thoughts, and let AI analyze your emotions for deep, actionable insights.</p>
+                </div>
+                <div class="glass-card p-6 hover:bg-gray-800/70">
+                    <i class="fas fa-robot text-3xl text-indigo-400 mb-4"></i>
+                    <h4 class="text-xl font-semibold text-indigo-200 mb-2">Smart Chatbot</h4>
+                    <p class="text-gray-300">Get personalized support from an AI that listens and adapts to your needs.</p>
+                </div>
+                <div class="glass-card p-6 hover:bg-gray-800/70">
+                    <i class="fas fa-chart-line text-3xl text-indigo-400 mb-4"></i>
+                    <h4 class="text-xl font-semibold text-indigo-200 mb-2">Productivity Boost</h4>
+                    <p class="text-gray-300">Track goals and habits with weekly summaries to keep you on point.</p>
+                </div>
+                <div class="glass-card p-6 hover:bg-gray-800/70">
+                    <i class="fas fa-eye text-3xl text-indigo-400 mb-4"></i>
+                    <h4 class="text-xl font-semibold text-indigo-200 mb-2">Visual Analytics</h4>
+                    <p class="text-gray-300">See your wellness trends in stunning, easy-to-read visuals.</p>
+                </div>
+                <div class="glass-card p-6 hover:bg-gray-800/70">
+                    <i class="fas fa-users text-3xl text-indigo-400 mb-4"></i>
+                    <h4 class="text-xl font-semibold text-indigo-200 mb-2">Community Connection</h4>
+                    <p class="text-gray-300">Share anonymously and find strength in a supportive network.</p>
+                </div>
+                <div class="glass-card p-6 hover:bg-gray-800/70">
+                    <i class="fas fa-star text-3xl text-indigo-400 mb-4"></i>
+                    <h4 class="text-xl font-semibold text-indigo-200 mb-2">Premium Perks</h4>
+                    <p class="text-gray-300">Unlock coaching and advanced tools for a next-level experience.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="mb-20 animate-fade-in">
+            <h3 class="text-4xl font-bold text-indigo-300 mb-8 text-center">Got Ideas or Questions?</h3>
+            <div class="glass-card p-8 text-center">
+                <p class="text-gray-200 text-lg mb-4">
+                    We’re all ears! Drop us a line and let’s shape the future of wellness together.
+                </p>
+                <a href="mailto:backenrex@gmail.com" class="inline-block px-6 py-3 bg-indigo-500 rounded-xl text-white font-semibold hover:bg-indigo-600 transition-all duration-300">Email Us: backenrex@gmail.com</a>
+            </div>
+        </section>
+
+        <!-- Social Media Section -->
+        <section class="mb-20 animate-fade-in text-center">
+            <h3 class="text-4xl font-bold text-indigo-300 mb-8">Stay Connected</h3>
+            <div class="flex justify-center space-x-12">
+                <a href="https://github.com/RajeshBasnet-dev" target="_blank" class="social-icon text-indigo-400">
+                    <i class="fab fa-github fa-3x"></i>
+                </a>
+                <a href="https://www.facebook.com" target="_blank" class="social-icon text-indigo-400">
+                    <i class="fab fa-facebook fa-3x"></i>
+                </a>
+                <a href="https://twitter.com" target="_blank" class="social-icon text-indigo-400">
+                    <i class="fab fa-twitter fa-3x"></i>
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900/80 py-6 text-center text-gray-400">
+        <div class="flex justify-center space-x-8 mb-4">
+            <a href="{% url 'learnmore' %}" class="nav-link text-indigo-400">Learn More</a>
+            <a href="{% url 'home' %}" class="nav-link text-indigo-400">Join the Waitlist</a>
+            <a href="{% url 'community' %}" class="nav-link text-indigo-400">Community</a>
+        </div>
+        <p>© 2025 MindTrack. All rights reserved. Built with <i class="fas fa-heart text-red-400"></i> for your mind.</p>
+    </footer>
+
+    <!-- GSAP Animations -->
+    <script>
+        gsap.from('.animate-fade-in', { opacity: 0, y: 30, duration: 1, stagger: 0.2 });
+        gsap.to('.animate-pulse-slow', { scale: 1.05, duration: 1.5, repeat: -1, yoyo: true, ease: 'power1.inOut' });
+    </script>
+</body>
+</html>
